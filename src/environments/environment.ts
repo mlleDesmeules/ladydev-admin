@@ -9,6 +9,6 @@ export const environment = {
 
 	api : {
 		url          : "http://api.blog.local/v1/admin",
-		client_token : "boyAw8bysPGt0tGoaQFTCGyYQ0ExprCT",
+		client_token : "2geXk6LcFaK3dLeoKYSjy6BcGUtkrl2d",
 	},
 };
