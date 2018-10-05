@@ -1,10 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
+
 import { BaseService } from "@core/data/base.service";
 import { Post } from "@core/data/posts/post.model";
+
 import { Observable } from "rxjs/Observable";
 import { catchError, map } from "rxjs/operators";
-import 'rxjs/add/observable/forkJoin'
+import { forkJoin } from "rxjs";
 
 @Injectable()
 export class PostCoverService extends BaseService {
@@ -40,7 +42,7 @@ export class PostCoverService extends BaseService {
 			requests.push(this.upload(postId, val.lang_id, val.file));
 		});
 
-		return Observable.forkJoin(requests);
+		return forkJoin(requests);
 	}
 
 	/**

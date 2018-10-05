@@ -3,7 +3,7 @@
 		<form [formGroup]="form" (submit)="save()" novalidate class="forms form-horizontal">
 			<div class="card">
 				<div class="card-close">
-					<span class="action active" *ngIf="post.hasComments()">
+					<span class="action active" *ngIf="post && post.hasComments()">
 						<a [routerLink]="[ '/admin/posts', post.id, 'comments' ]">
 							<i class="far fa-comments"></i>
 						</a>

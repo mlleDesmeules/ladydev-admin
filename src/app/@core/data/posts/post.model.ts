@@ -119,7 +119,7 @@ export class Post {
 		};
 	}
 
-	hasComments () {
+	hasComments() {
 		let total = 0;
 
 		this.translations.forEach((val) => { total += val.comments_count; });
@@ -127,11 +127,11 @@ export class Post {
 		return (total > 0);
 	}
 
-	isFeatured () {
+	isFeatured() {
 		return (this.is_featured === Post.FEATURED);
 	}
 
-	areCommentsEnabled () {
+	areCommentsEnabled() {
 		return (this.is_comment_enabled === Post.COMMENTS_ENABLED);
 	}
 

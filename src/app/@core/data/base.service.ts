@@ -87,7 +87,7 @@ export abstract class BaseService {
 		return list;
 	}
 
-	mapModel ( model: any ) {
+	mapModel (model: any) {
 		return this.model(model);
 	}
 }

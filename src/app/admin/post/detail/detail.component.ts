@@ -1,17 +1,18 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormArray, FormGroup, Validators, FormControl } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
+
 import { Category } from "@core/data/categories";
-import { ErrorResponse } from "@core/data/error-response.model";
 import { Lang } from "@core/data/languages";
-import { Post, PostService, PostCoverService } from "@core/data/posts";
-import { PostStatus } from "@core/data/posts/post-status.model";
-import { PostTagService } from "@core/data/posts/post-tag.service";
 import { Tag } from "@core/data/tags";
+import { ErrorResponse } from "@core/data/error-response.model";
 import { LoggerService } from "@shared/logger/logger.service";
+import { Post, PostStatus, PostService, PostTagService, PostCoverService } from "@core/data/posts";
+
 import { AtIndexOfPipe } from "@shared/pipes/array/at-index-of.pipe";
 import { SlugPipe } from "@shared/pipes/string/slug.pipe";
-import { Observable } from "rxjs/Observable";
+
+import { forkJoin } from "rxjs";
 
 @Component({
 	selector    : "app-post-detail",
@@ -204,8 +205,8 @@ export class DetailComponent implements OnInit {
 
 	/**
 	 *
-	 * @param {string} name
-	 * @param {number} idx
+	 * @param name
+	 * @param idx
 	 *
 	 * @return {boolean}
 	 */
@@ -252,7 +253,6 @@ export class DetailComponent implements OnInit {
 		this.form.get("category_id").setValue(this.post.category_id);
 		this.form.get("post_status_id").setValue(this.post.post_status_id);
 
-
 		this.languages.forEach((val, idx) => {
 			const translation = this.post.findTranslation(val.icu);
 
@@ -291,6 +291,7 @@ export class DetailComponent implements OnInit {
 					if (this.isCreate()) {
 						this.resetForm();
 					} else {
+						console.log(result);
 						this.post = result;
 					}
 
@@ -402,17 +403,17 @@ export class DetailComponent implements OnInit {
 		}
 
 		//	create an observable on all requests
-		Observable.forkJoin(allRequests)
-				  .subscribe(
-						  ( results: Post[] ) => {
-							  this.formLoading = false;
-							  this.post        = results[ (results.length - 1) ];
-						  },
-						  ( err: ErrorResponse ) => {
-							  this.formLoading = false;
-							  console.log(err);
-						  },
-				  );
+		forkJoin(allRequests)
+			.subscribe(
+				(results: Post[]) => {
+					this.formLoading = false;
+					this.post        = results[ (results.length - 1) ];
+				},
+				(err: ErrorResponse) => {
+					this.formLoading = false;
+					console.log(err);
+				},
+			);
 
 		//	return that are is something to do
 		return true;
