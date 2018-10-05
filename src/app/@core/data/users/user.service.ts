@@ -19,7 +19,7 @@ export class UserService extends BaseService {
 	 * @return {any}
 	 */
 	public getAppUser () {
-		return JSON.parse(localStorage.getItem(UserService.STORAGE_KEY));
+		return this.mapModel(JSON.parse(localStorage.getItem(UserService.STORAGE_KEY)));
 	}
 
 	/**
