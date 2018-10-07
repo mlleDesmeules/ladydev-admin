@@ -4,12 +4,12 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { PostRoutingModule } from "./post-routing.module";
 
-import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 import { NgSelectModule } from "@ng-select/ng-select";
 import { PaginationModule } from "@shared/pagination/pagination.module";
 import { PipesModule } from "@shared/pipes/pipes.module";
 import { ThemeModule } from "@theme/theme.module";
 import { FileInputModule } from "@shared/file-input/file-input.module";
+import { CodeEditorModule } from "@shared/code-editor/code-editor.module";
 
 import { PostComponent } from "admin/post/post.component";
 import { ListComponent } from "admin/post/list/list.component";
@@ -20,22 +20,21 @@ import { ReplyComponent } from './comment/reply/reply.component';
 
 
 @NgModule({
-	imports      : [
+	imports: [
 		CommonModule,
 		FormsModule,
 		ReactiveFormsModule,
 		PostRoutingModule,
 
-		FroalaEditorModule,
-		FroalaViewModule,
 		NgSelectModule,
 
 		FileInputModule,
 		PaginationModule,
+		CodeEditorModule,
 		PipesModule,
 		ThemeModule,
 	],
-	declarations : [
+	declarations: [
 		PostComponent,
 		ListComponent,
 		DetailComponent,
@@ -43,7 +42,7 @@ import { ReplyComponent } from './comment/reply/reply.component';
 		SingleComponent,
 		ReplyComponent,
 	],
-	entryComponents : [
+	entryComponents: [
 		ReplyComponent,
 	],
 })

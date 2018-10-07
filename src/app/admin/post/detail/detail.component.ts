@@ -15,9 +15,9 @@ import { SlugPipe } from "@shared/pipes/string/slug.pipe";
 import { forkJoin } from "rxjs";
 
 @Component({
-	selector    : "app-post-detail",
-	templateUrl : "./detail.component.html",
-	styleUrls   : [ "./detail.component.scss" ],
+	selector: "app-post-detail",
+	templateUrl: "./detail.component.html",
+	styleUrls: ["./detail.component.scss"],
 })
 export class DetailComponent implements OnInit {
 
@@ -30,36 +30,23 @@ export class DetailComponent implements OnInit {
 	public tags: Tag[];
 
 	public form: FormGroup;
-	public errors: any  = {};
+	public errors: any = {};
 
-	public formLoading    = false;
-	public statusLoading  = false;
+	public formLoading = false;
+	public statusLoading = false;
 	public featureLoading = false;
 
-	public editorOptions: Object = {
-		charCounterCount : true,
-		heightMin        : 150,
-		toolbarButtons   : [
-			"bold", "italic", "underline", "strikeThrough",
-			"|", "fontFamily", "fontSize", "color",
-			"|", "paragraphFormat", "formatOL", "formatUL", "outdent", "indent", "quote",
-			"-", "insertLink", "insertImage", "embedly", "insertFile", "insertTable",
-			"|", "insertHR", "selectAll", "clearFormatting",
-			"|", "print", "help", "html",
-		],
-	};
-
-	constructor ( private _route: ActivatedRoute,
-				  private _builder: FormBuilder,
-				  private atIndexOf: AtIndexOfPipe,
-				  private slugPipe: SlugPipe,
-				  private service: PostService,
-				  private coverService: PostCoverService,
-				  private postTagService: PostTagService,
-				  private logger: LoggerService ) {
+	constructor(private _route: ActivatedRoute,
+		private _builder: FormBuilder,
+		private atIndexOf: AtIndexOfPipe,
+		private slugPipe: SlugPipe,
+		private service: PostService,
+		private coverService: PostCoverService,
+		private postTagService: PostTagService,
+		private logger: LoggerService) {
 	}
 
-	ngOnInit () {
+	ngOnInit() {
 		this._setData();
 		this._createForm();
 
@@ -72,7 +59,7 @@ export class DetailComponent implements OnInit {
 	 *
 	 * @private
 	 */
-	private _createForm () {
+	private _createForm() {
 		let status = this.post.post_status_id;
 
 		if (this.isCreate()) {
@@ -80,24 +67,24 @@ export class DetailComponent implements OnInit {
 		}
 
 		this.form = this._builder.group({
-			category_id        : this._builder.control(this.post.category_id, [ Validators.required ]),
-			post_status_id     : this._builder.control(status, [ Validators.required ]),
-			is_featured        : this._builder.control(this.post.is_featured),
-			is_comment_enabled : this._builder.control(this.post.is_comment_enabled),
-			tags               : this._builder.control([]),
-			translations       : this._builder.array([]),
+			category_id: this._builder.control(this.post.category_id, [Validators.required]),
+			post_status_id: this._builder.control(status, [Validators.required]),
+			is_featured: this._builder.control(this.post.is_featured),
+			is_comment_enabled: this._builder.control(this.post.is_comment_enabled),
+			tags: this._builder.control([]),
+			translations: this._builder.array([]),
 		});
 
-		this.languages.forEach(( lang: Lang ) => {
+		this.languages.forEach((lang: Lang) => {
 			const translation = this.post.findTranslation(lang.icu);
 			const control = this._builder.group({
-				lang_id   : this._builder.control(lang.id),
-				cover     : this._builder.control(undefined),
-				file_alt  : this._builder.control(translation.cover_alt),
-				title     : this._builder.control(translation.title),
-				slug      : this._builder.control(translation.slug),
-				summary   : this._builder.control(translation.summary, [ Validators.maxLength(180) ]),
-				content   : this._builder.control(translation.content),
+				lang_id: this._builder.control(lang.id),
+				cover: this._builder.control(undefined),
+				file_alt: this._builder.control(translation.cover_alt),
+				title: this._builder.control(translation.title),
+				slug: this._builder.control(translation.slug),
+				summary: this._builder.control(translation.summary, [Validators.maxLength(180)]),
+				content: this._builder.control(translation.content),
 			});
 
 			control.get("slug").disable();
@@ -106,7 +93,7 @@ export class DetailComponent implements OnInit {
 		});
 	}
 
-	public displayStatusChangeBtn ( status: string ): boolean {
+	public displayStatusChangeBtn(status: string): boolean {
 		if (this.isCreate()) {
 			return false;
 		}
@@ -122,9 +109,9 @@ export class DetailComponent implements OnInit {
 	 * @return {File[]}
 	 * @private
 	 */
-	private _filesToUpload ( post: Post ): any[] {
+	private _filesToUpload(post: Post): any[] {
 		const files: any[] = [];
-		const translations  = this.getTranslations().controls;
+		const translations = this.getTranslations().controls;
 
 		translations.forEach((control) => {
 			const file = control.get("cover").value;
@@ -134,33 +121,33 @@ export class DetailComponent implements OnInit {
 				let form = new FormData();
 				form.append("picture", file);
 
-				files.push({ lang_id : lang, file : form });
+				files.push({ lang_id: lang, file: form });
 			}
 		});
 
 		return files;
 	}
 
-	public getErrors ( name: string, langId?: number ): any[] {
+	public getErrors(name: string, langId?: number): any[] {
 		//  if there isn't any errors, then return an empty array
 		if (Object.keys(this.errors).length === 0) {
 			return [];
 		}
 
 		//  if the attribute exists as a key in the errors list, then return its content.
-		if (this.errors[ name ]) {
-			return this.errors[ name ];
+		if (this.errors[name]) {
+			return this.errors[name];
 		}
 
 		const lang = this.getLang(langId);
 
 		if (this.errors.hasOwnProperty(lang)) {
-			if (this.errors[ lang ].hasOwnProperty(name)) {
-				return this.errors[ lang ][ name ];
+			if (this.errors[lang].hasOwnProperty(name)) {
+				return this.errors[lang][name];
 			}
 
-			if (this.errors[ lang ].length > 0 && this.errors[ lang ][ 0 ].hasOwnProperty(name)) {
-				return [ this.errors[ lang ][ 0 ][ name ] ];
+			if (this.errors[lang].length > 0 && this.errors[lang][0].hasOwnProperty(name)) {
+				return [this.errors[lang][0][name]];
 			}
 		}
 
@@ -173,7 +160,7 @@ export class DetailComponent implements OnInit {
 	 *
 	 * @return {string}
 	 */
-	private getLang ( langId ): string {
+	private getLang(langId): string {
 		return this.atIndexOf.transform(langId, this.languages, "id", "icu");
 	}
 
@@ -182,7 +169,7 @@ export class DetailComponent implements OnInit {
 	 *
 	 * @return {FormArray}
 	 */
-	public getTranslations (): FormArray {
+	public getTranslations(): FormArray {
 		return this.form.get("translations") as FormArray;
 	}
 
@@ -191,12 +178,12 @@ export class DetailComponent implements OnInit {
 	 * @return {}
 	 * @private
 	 */
-	private _getTagsToUpdate () {
+	private _getTagsToUpdate() {
 		const tags: any[] = this.form.get("tags").value;
 
 		// if is create and there is tags, then they will have to be added
 		if (this.isCreate()) {
-			return { add : tags, delete : [] };
+			return { add: tags, delete: [] };
 		}
 
 		// otherwise, compare with existing tags and check which ones needs to be added and removed
@@ -210,17 +197,17 @@ export class DetailComponent implements OnInit {
 	 *
 	 * @return {boolean}
 	 */
-	public hasError ( name: string, idx?: number) {
+	public hasError(name: string, idx?: number) {
 		let input: FormControl;
 		let errors: any[] = [];
 
 		if (idx === undefined) {
-			input  = this.form.get(name) as FormControl;
+			input = this.form.get(name) as FormControl;
 			errors = this.getErrors(name);
 		} else {
 			const translation = this.getTranslations().at(idx);
 
-			input  = translation.get(name) as FormControl;
+			input = translation.get(name) as FormControl;
 			errors = this.getErrors(name, translation.get('lang_id').value);
 		}
 
@@ -233,7 +220,7 @@ export class DetailComponent implements OnInit {
 	 *
 	 * @return {Boolean}
 	 */
-	private hasFilesToUpload ( post: Post ): Boolean {
+	private hasFilesToUpload(post: Post): Boolean {
 		return (this._filesToUpload(post).length > 0);
 	}
 
@@ -242,14 +229,14 @@ export class DetailComponent implements OnInit {
 	 *
 	 * @return {boolean}
 	 */
-	public isCreate () {
+	public isCreate() {
 		return (typeof this.post === "undefined" || typeof this.post.id === "undefined");
 	}
 
 	/**
 	 *
 	 */
-	public resetForm () {
+	public resetForm() {
 		this.form.get("category_id").setValue(this.post.category_id);
 		this.form.get("post_status_id").setValue(this.post.post_status_id);
 
@@ -270,11 +257,11 @@ export class DetailComponent implements OnInit {
 	/**
 	 *
 	 */
-	public save () {
-		this.errors      = [];
+	public save() {
+		this.errors = [];
 		this.formLoading = true;
 
-		let req  = null;
+		let req = null;
 		let body = this.post.form(this.form.getRawValue());
 
 		if (this.isCreate()) {
@@ -284,28 +271,27 @@ export class DetailComponent implements OnInit {
 		}
 
 		req.subscribe(
-				(result: Post) => {
-					const hasRelation = this._updateAllRelations(result);
+			(result: Post) => {
+				const hasRelation = this._updateAllRelations(result);
 
-					// reset form after create
-					if (this.isCreate()) {
-						this.resetForm();
-					} else {
-						console.log(result);
-						this.post = result;
-					}
+				// reset form after create
+				if (this.isCreate()) {
+					this.resetForm();
+				} else {
+					this.post = this.service.mapModel(result);
+				}
 
-					// if there isn't any relation to update show the success message
-					if (!hasRelation) {
-						this.formLoading = false;
-
-						this._showSuccessMessage();
-					}
-				},
-				(err: ErrorResponse) => {
+				// if there isn't any relation to update show the success message
+				if (!hasRelation) {
 					this.formLoading = false;
-					this.errors      = err.form_error;
-				},
+
+					this._showSuccessMessage();
+				}
+			},
+			(err: ErrorResponse) => {
+				this.formLoading = false;
+				this.errors = err.form_error;
+			},
 		);
 	}
 
@@ -313,27 +299,27 @@ export class DetailComponent implements OnInit {
 	 *
 	 * @private
 	 */
-	private _setData () {
+	private _setData() {
 		//  get all data from the route
-		const routeLanguages  = this._route.snapshot.data[ "languages" ];
-		const routeStatuses   = this._route.snapshot.data[ "statuses" ];
-		const routeCategories = this._route.snapshot.data[ "categories" ];
-		const routeTags       = this._route.snapshot.data[ "tags" ];
-		const routePost       = this._route.snapshot.data[ "post" ];
+		const routeLanguages = this._route.snapshot.data["languages"];
+		const routeStatuses = this._route.snapshot.data["statuses"];
+		const routeCategories = this._route.snapshot.data["categories"];
+		const routeTags = this._route.snapshot.data["tags"];
+		const routePost = this._route.snapshot.data["post"];
 
 		// assign data found or set a default value
-		this.post       = routePost || new Post();
-		this.languages  = routeLanguages || [];
-		this.statuses   = routeStatuses || [];
+		this.post = routePost || new Post();
+		this.languages = routeLanguages || [];
+		this.statuses = routeStatuses || [];
 		this.categories = routeCategories || [];
-		this.tags       = routeTags || [];
+		this.tags = routeTags || [];
 	}
 
 	/**
 	 *
 	 * @param {number} translationIdx
 	 */
-	public setSlug ( translationIdx: number ) {
+	public setSlug(translationIdx: number) {
 		//  get the current title
 		const title = this.getTranslations().at(translationIdx).get("title").value;
 
@@ -347,7 +333,7 @@ export class DetailComponent implements OnInit {
 	 *
 	 * @private
 	 */
-	private _showSuccessMessage () {
+	private _showSuccessMessage() {
 		if (this.isCreate()) {
 			this.logger.success("The post was successfully created");
 		} else {
@@ -360,7 +346,7 @@ export class DetailComponent implements OnInit {
 	 * @return {boolean}
 	 * @private
 	 */
-	private _tagsChanged (): boolean {
+	private _tagsChanged(): boolean {
 		const tags = this._getTagsToUpdate();
 
 		// check if there is any tag to add or delete
@@ -374,7 +360,7 @@ export class DetailComponent implements OnInit {
 	 * @return {boolean}
 	 * @private
 	 */
-	private _updateAllRelations ( post: Post ): boolean {
+	private _updateAllRelations(post: Post): boolean {
 		const allRequests = [];
 
 		//	if there are any files to upload, create upload requests
@@ -407,7 +393,7 @@ export class DetailComponent implements OnInit {
 			.subscribe(
 				(results: Post[]) => {
 					this.formLoading = false;
-					this.post        = results[ (results.length - 1) ];
+					this.post = results[(results.length - 1)];
 				},
 				(err: ErrorResponse) => {
 					this.formLoading = false;
@@ -419,7 +405,7 @@ export class DetailComponent implements OnInit {
 		return true;
 	}
 
-	public updateFlag ( flag: string, value: number ) {
+	public updateFlag(flag: string, value: number) {
 		this.form.get(flag).setValue(value);
 
 		let body = this.post.form(this.form.getRawValue());
@@ -427,7 +413,7 @@ export class DetailComponent implements OnInit {
 		this._updatePost(body);
 	}
 
-	public updateFeatured ( featuredFlag: number ) {
+	public updateFeatured(featuredFlag: number) {
 		this.form.get("is_featured").setValue(featuredFlag);
 
 		let body = this.post.form(this.form.getRawValue());
@@ -435,7 +421,7 @@ export class DetailComponent implements OnInit {
 		this._updatePost(body, "featureLoading");
 	}
 
-	public updateStatus ( statusName: string ) {
+	public updateStatus(statusName: string) {
 		//  get the status ID related to the name passed in parameter
 		const statusId = this.atIndexOf.transform(statusName, this.statuses, "name", "id");
 
@@ -447,34 +433,34 @@ export class DetailComponent implements OnInit {
 		this._updatePost(body, "statusLoading");
 	}
 
-	private _updatePost (body: any, loading?: string) {
-		this.errors     = [];
+	private _updatePost(body: any, loading?: string) {
+		this.errors = [];
 
 		if (loading) {
-			this[ loading ] = true;
+			this[loading] = true;
 		}
 
 		this.service
 			.update(this.post.id, body)
 			.subscribe(
-					(result: Post) => {
-						this.post = result;
+				(result: Post) => {
+					this.post = result;
 
-						if (loading) {
-							this[ loading ] = false;
-						}
+					if (loading) {
+						this[loading] = false;
+					}
 
-						this._showSuccessMessage();
-					},
-					(err: ErrorResponse) => {
-						this.errors = err.form_error;
+					this._showSuccessMessage();
+				},
+				(err: ErrorResponse) => {
+					this.errors = err.form_error;
 
-						if (loading) {
-							this[ loading ] = false;
-						}
+					if (loading) {
+						this[loading] = false;
+					}
 
-						this.resetForm();
-					},
+					this.resetForm();
+				},
 			);
 	}
 }

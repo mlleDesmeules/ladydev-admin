@@ -9,14 +9,12 @@
 						</a>
 					</span>
 
-					<span class="action" [class.active]="post.areCommentsEnabled()"
-					      (click)="updateFlag('is_comment_enabled', post.areCommentsEnabled() ? 0 : 1)">
+					<span class="action" [class.active]="post.areCommentsEnabled()" (click)="updateFlag('is_comment_enabled', post.areCommentsEnabled() ? 0 : 1)">
 						<span *ngIf="post.areCommentsEnabled()"><i class="fas fa-comment"></i></span>
 						<span *ngIf="!post.areCommentsEnabled()"><i class="fas fa-comment-slash"></i></span>
 					</span>
 
-					<span class="action" [class.active]="post.isFeatured()" *ngIf="!isCreate()"
-					      (click)="updateFlag('is_featured', post.isFeatured() ? 0 : 1)">
+					<span class="action" [class.active]="post.isFeatured()" *ngIf="!isCreate()" (click)="updateFlag('is_featured', post.isFeatured() ? 0 : 1)">
 						<span *ngIf="!post.isFeatured()"><i class="far fa-star"></i></span>
 						<span *ngIf="post.isFeatured()"><i class="fas fa-star"></i></span>
 					</span>
@@ -32,9 +30,8 @@
 							Category
 						</label>
 						<div class="col-sm-8 select">
-							<ng-select class="control" [class.is-invalid]="hasError('category_id')"
-							           formControlName="category_id" placeholder="Please select a category"
-							           [items]="categories | flatTranslation:'name'" bindValue="id"></ng-select>
+							<ng-select class="control" [class.is-invalid]="hasError('category_id')" formControlName="category_id"
+							 placeholder="Please select a category" [items]="categories | flatTranslation:'name'" bindValue="id"></ng-select>
 
 							<div class="is-invalid help-block text-danger">
 								<small *ngFor="let err of getErrors('category_id')">{{ err }}</small>
@@ -48,9 +45,8 @@
 							Tags
 						</label>
 						<div class="col-sm-8">
-							<ng-select class="control" [class.is-invalid]="hasError('tags')"
-							           formControlName="tags" placeholder="Select tags"
-							           [items]="tags | flatTranslation:'name'" multiple="true" bindValue="id" bindLabel="name">
+							<ng-select class="control" [class.is-invalid]="hasError('tags')" formControlName="tags" placeholder="Select tags"
+							 [items]="tags | flatTranslation:'name'" multiple="true" bindValue="id" bindLabel="name">
 							</ng-select>
 
 							<div class="is-invalid help-block text-danger" *ngIf="hasError('tags')">
@@ -60,12 +56,11 @@
 					</div>
 
 					<ngb-tabset justify="justified" type="pills" formArrayName="translations">
-						<ngb-tab *ngFor="let t of getTranslations().controls; let idx = index;"
-						         [formArrayName]="idx">
+						<ngb-tab *ngFor="let t of getTranslations().controls; let idx = index;" [formArrayName]="idx">
 							<ng-template ngbTabTitle>
 								{{ t.get("lang_id").value | atIndexOf:languages:"id":"name" }}
 							</ng-template>
-							
+
 							<ng-template ngbTabContent>
 								<div class="pt-4 px-3">
 									<div class="form-group row">
@@ -77,14 +72,13 @@
 										</div>
 									</div>
 									<div class="line"></div>
-									
+
 									<div class="form-group row">
 										<label class="offset-sm-1 col-sm-2 form-control-label">
 											Cover Alt
 										</label>
 										<div class="col-sm-8">
-											<input type="text" formControlName="file_alt"
-											       class="form-control" [class.is-invalid]="hasError('file_alt', idx)">
+											<input type="text" formControlName="file_alt" class="form-control" [class.is-invalid]="hasError('file_alt', idx)">
 
 											<div class="help-block text-xsmall">
 												This text is usually displayed when the image can't be properly loaded or
@@ -97,15 +91,14 @@
 										</div>
 									</div>
 									<div class="line"></div>
-									
+
 									<div class="form-group row">
 										<label class="offset-sm-1 col-sm-2 form-control-label">
 											Title
 										</label>
 										<div class="col-sm-8">
-											<input type="text" formControlName="title"
-											       class="form-control" [class.is-invalid]="hasError('title', idx)"
-											       (change)="setSlug(idx)">
+											<input type="text" formControlName="title" class="form-control" [class.is-invalid]="hasError('title', idx)"
+											 (change)="setSlug(idx)">
 
 											<div class="is-invalid help-block text-danger">
 												<small *ngFor="let err of getErrors('title', t.get('lang_id').value)">{{ err }}</small>
@@ -113,14 +106,13 @@
 										</div>
 									</div>
 									<div class="line"></div>
-									
+
 									<div class="form-group row">
 										<label class="offset-sm-1 col-sm-2 form-control-label">
 											Slug
 										</label>
 										<div class="col-sm-8">
-											<input type="text" formControlName="slug"
-											       class="form-control" [class.is-invalid]="hasError('slug', idx)">
+											<input type="text" formControlName="slug" class="form-control" [class.is-invalid]="hasError('slug', idx)">
 
 											<div class="is-invalid help-block text-danger">
 												<small *ngFor="let err of getErrors('slug', t.get('lang_id').value)">{{ err }}</small>
@@ -128,14 +120,13 @@
 										</div>
 									</div>
 									<div class="line"></div>
-									
+
 									<div class="form-group row">
 										<label class="offset-sm-1 col-sm-2 form-control-label">
 											Summary
 										</label>
 										<div class="col-sm-8">
-											<input type="text" formControlName="summary"
-											       class="form-control" [class.is-invalid]="hasError('summary', idx)">
+											<input type="text" formControlName="summary" class="form-control" [class.is-invalid]="hasError('summary', idx)">
 
 											<div class="is-invalid help-block text-danger">
 												<small *ngFor="let err of getErrors('summary', t.get('lang_id').value)">{{ err }}</small>
@@ -143,13 +134,13 @@
 										</div>
 									</div>
 									<div class="line"></div>
-									
+
 									<div class="form-group row">
 										<label class="offset-sm-1 col-sm-2 form-control-label">
 											Content
 										</label>
 										<div class="col-sm-8">
-											<div [froalaEditor]="editorOptions" formControlName="content"></div>
+											<ace-code-editor formControlName="content"></ace-code-editor>
 										</div>
 									</div>
 								</div>
@@ -159,15 +150,15 @@
 				</div>
 				<div class="card-footer text-right">
 					<button type="button" class="btn btn-outline-success d-none" [class.d-inline]="displayStatusChangeBtn('draft')"
-					        (click)="updateStatus('unpublished')" [ladda]="statusLoading" data-style="zoom-in">
+					 (click)="updateStatus('unpublished')" [ladda]="statusLoading" data-style="zoom-in">
 						Review
 					</button>
 					<button type="button" class="btn btn-outline-primary d-none" [class.d-inline]="displayStatusChangeBtn('unpublished')"
-					        (click)="updateStatus('published')" [ladda]="statusLoading" data-style="zoom-in">
+					 (click)="updateStatus('published')" [ladda]="statusLoading" data-style="zoom-in">
 						Publish
 					</button>
 					<button type="button" class="btn btn-outline-secondary d-none" [class.d-inline]="displayStatusChangeBtn('published')"
-					        (click)="updateStatus('archived')" [ladda]="statusLoading" data-style="zoom-in">
+					 (click)="updateStatus('archived')" [ladda]="statusLoading" data-style="zoom-in">
 						Archive
 					</button>
 

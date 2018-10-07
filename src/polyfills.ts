@@ -64,3 +64,6 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+// ng2-ace-editor set global if in case it isn't set
+(window as any).global = window;
