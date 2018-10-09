@@ -79,7 +79,7 @@ export class DetailComponent implements OnInit {
 			const translation = this.post.findTranslation(lang.icu);
 			const control = this._builder.group({
 				lang_id: this._builder.control(lang.id),
-				cover: this._builder.control(undefined),
+				cover: this._builder.control(translation.cover),
 				file_alt: this._builder.control(translation.cover_alt),
 				title: this._builder.control(translation.title),
 				slug: this._builder.control(translation.slug),
