@@ -27,6 +27,12 @@ export * from "./post-tag.service";
 export * from "./post-comment.model";
 export * from "./post-comment.service";
 
+// post links
+export * from "./post-link.model";
+export * from "./post-link.service";
+export * from "./post-link-type.model";
+export * from "./post-link-type.service";
+
 // resolvers
 export * from "./resolvers";
 

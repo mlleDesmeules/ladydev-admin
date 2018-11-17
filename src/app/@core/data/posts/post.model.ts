@@ -1,4 +1,5 @@
 import { PostLang } from "@core/data/posts/post-lang.model";
+import { PostLink } from "@core/data/posts/post-link.model";
 import { Tag } from "@core/data/tags";
 
 /**
@@ -18,6 +19,7 @@ export class Post {
 
 	public translations: PostLang[] = [];
 	public tags: Tag[] = [];
+	public links: PostLink[] = [];
 
 	public readonly created_on: string;
 	public readonly updated_on: string;
@@ -25,16 +27,25 @@ export class Post {
 	constructor ( model: any = null ) {
 		if (!model) { return; }
 
-		this.id             = parseInt(model.id);
-		this.category_id    = parseInt(model.category_id);
-		this.post_status_id = parseInt(model.post_status_id);
-		this.is_featured    = parseInt(model.is_featured);
-		this.is_comment_enabled = parseInt(model.is_comment_enabled);
+		this.id = parseInt(model.id, 10);
+		this.category_id = parseInt(model.category_id, 10);
+		this.post_status_id = parseInt(model.post_status_id, 10);
+		this.is_featured = parseInt(model.is_featured, 10);
+		this.is_comment_enabled = parseInt(model.is_comment_enabled, 10);
 
 		this.translations = this.mapTranslations(model.translations);
+		this.links = this.mapRelation(PostLink, model.links);
 
 		this.created_on = model.created_on;
 		this.updated_on = model.updated_on;
+	}
+
+	mapRelation(model, list: any[]): any[] {
+		list.forEach((val, idx) => {
+			list[ idx ] = new model(val);
+		});
+
+		return list;
 	}
 
 	/**
@@ -57,8 +68,8 @@ export class Post {
 	 * @return {object}
 	 */
 	compareTags ( toCompare: any[] ) {
-		let toAdd    = [];
-		let toDelete = [];
+		const toAdd = [];
+		const toDelete = [];
 
 		this.tags.forEach((tag) => {
 			if (toCompare.indexOf(tag.id) < 0) {
