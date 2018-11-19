@@ -2,6 +2,8 @@ import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { BaseService } from "@core/data/base.service";
 import { PostLink } from "@core/data/posts/post-link.model";
+import { Observable, throwError } from "rxjs";
+import { catchError, map } from "rxjs/operators";
 
 @Injectable({
 	providedIn: "root",
@@ -14,6 +16,14 @@ export class PostLinkService extends BaseService {
 		super(http);
 
 		this.model = (construct: any) => new PostLink(construct);
+	}
+
+	create(body: any, postId?: number): Observable<PostLink> {
+		return this.http.post(this._url(postId), body)
+			.pipe(
+				map((res: any) => this.mapModel(res)),
+				catchError((err: any) => throwError(this.mapError(err))),
+			);
 	}
 
 	protected _url(id: string | number, type?: string | number): string {

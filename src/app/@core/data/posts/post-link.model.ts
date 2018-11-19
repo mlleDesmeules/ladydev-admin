@@ -1,7 +1,7 @@
 export class PostLink {
-	public post_id: number;
-	public link_type: number;
-	public link: string;
+	public post_id: number = null;
+	public link_type: number = null;
+	public link: string = null;
 
 	constructor(model: any = null) {
 		if (!model) {
