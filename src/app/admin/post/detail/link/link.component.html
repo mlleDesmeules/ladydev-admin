@@ -1,0 +1,26 @@
+<div [formGroup]="form" class="form-group row mb-4">
+    <label class="offset-sm-1 col-sm-2 form-control-label">
+        Links
+        <span class="pull-right" (click)="addLink()"><i class="fas fa-plus-square"></i></span>
+    </label>
+
+    <div class="col-sm-8" formArrayName="links">
+        <div class="input-group mb-2" *ngFor="let link of getLinks().controls; let idx=index;" [formArrayName]="idx">
+            <div class="input-group-prepend" ngbDropdown>
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle>
+                    Link Type <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu" ngbDropdownMenu>
+                    <a *ngFor="let type of types" class="dropdown-item"
+                       [class.dropdown-item-active]="isTypeActive(link, type.id)"
+                       (click)="selectType(link, type.id)">
+                        {{ type.name }}
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a rel="nofollow" class="dropdown-item" (click)="removeLink(idx)">Remove</a>
+                </div>
+            </div>
+            <input type="text" formControlName="link" class="form-control" (blur)="saveLink(link)">
+        </div>
+    </div>
+</div>

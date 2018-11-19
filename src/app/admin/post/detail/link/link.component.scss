@@ -1,0 +1,8 @@
+$templateColour: "ladydev";
+
+@import "../../../../../assets/theme/style/modules/colors";
+
+.dropdown-item.dropdown-item-active {
+  color: $primary;
+  font-weight: bold;
+}
