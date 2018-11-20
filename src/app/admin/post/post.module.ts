@@ -15,8 +15,9 @@ import { PostComponent } from "admin/post/post.component";
 import { ListComponent } from "admin/post/list/list.component";
 import { DetailComponent } from "admin/post/detail/detail.component";
 import { CommentComponent } from "admin/post/comment/comment.component";
-import { SingleComponent } from './comment/single/single.component';
-import { ReplyComponent } from './comment/reply/reply.component';
+import { SingleComponent } from "./comment/single/single.component";
+import { ReplyComponent } from "./comment/reply/reply.component";
+import { LinkComponent } from "./detail/link/link.component";
 
 
 @NgModule({
@@ -41,6 +42,7 @@ import { ReplyComponent } from './comment/reply/reply.component';
 		CommentComponent,
 		SingleComponent,
 		ReplyComponent,
+		LinkComponent,
 	],
 	entryComponents: [
 		ReplyComponent,

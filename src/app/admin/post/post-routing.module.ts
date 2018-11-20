@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
 import { LanguageResolve } from "@core/data/languages";
-import { ListResolve, DetailResolve, CommentResolve } from "@core/data/posts";
+import { ListResolve, DetailResolve, CommentResolve, LinkTypeResolve } from "@core/data/posts";
 import { StatusResolve } from "@core/data/posts/resolvers/status.resolve";
 import { FullListResolve as CategoryListResolve } from "@core/data/categories";
 import { FullListResolve as TagListResolve } from "@core/data/tags";
@@ -38,11 +38,12 @@ const routes: Routes = [
 				path      : "update/:id",
 				component : DetailComponent,
 				resolve   : {
-					post       : DetailResolve,
-					languages  : LanguageResolve,
-					statuses   : StatusResolve,
-					categories : CategoryListResolve,
-					tags       : TagListResolve,
+					post      : DetailResolve,
+					languages : LanguageResolve,
+					linkTypes : LinkTypeResolve,
+					statuses  : StatusResolve,
+					categories: CategoryListResolve,
+					tags      : TagListResolve,
 				},
 			}, {
 				path      : ":id/comments",
