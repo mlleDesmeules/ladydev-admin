@@ -29,10 +29,11 @@ const routes: Routes = [
 				path      : "create",
 				component : DetailComponent,
 				resolve   : {
-					languages  : LanguageResolve,
-					statuses   : StatusResolve,
-					categories : CategoryListResolve,
-					tags       : TagListResolve,
+					languages : LanguageResolve,
+					statuses  : StatusResolve,
+					linkTypes : LinkTypeResolve,
+					categories: CategoryListResolve,
+					tags      : TagListResolve,
 				},
 			}, {
 				path      : "update/:id",

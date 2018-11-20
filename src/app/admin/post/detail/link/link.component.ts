@@ -110,8 +110,13 @@ export class LinkComponent implements OnInit {
 			);
 	}
 
+	/**
+	 *
+	 * @param {FormControl} link
+	 * @param {number} idx
+	 */
 	public saveLink(link: FormControl, idx: number) {
-		if (!link.valid || this.postId === null) {
+		if (!link.valid || !this.postId) {
 			return;
 		}
 

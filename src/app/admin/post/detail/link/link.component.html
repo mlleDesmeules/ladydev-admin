@@ -1,8 +1,9 @@
 <div [formGroup]="form" class="form-group row mb-4">
     <label class="offset-sm-1 col-sm-2 form-control-label">
         Links
-        <span class="pull-right" (click)="addLink()" *ngIf="!allTypesSelected()"><i
-                class="fas fa-plus-square"></i></span>
+        <span class="pull-right" (click)="addLink()" *ngIf="!allTypesSelected()">
+            <i class="fas fa-plus-square"></i>
+        </span>
     </label>
 
     <div class="col-sm-8" formArrayName="links">
