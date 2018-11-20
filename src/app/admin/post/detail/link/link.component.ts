@@ -29,13 +29,7 @@ export class LinkComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.form = this.builder.group({
-			links: this.builder.array([]),
-		});
-
-		this.links.forEach((val: PostLink) => { this.addLink(val); });
-
-		this.formReady.emit(this.form);
+		this.setForm();
 	}
 
 	/**
@@ -61,7 +55,12 @@ export class LinkComponent implements OnInit {
 	 * todo    implement method to check if all types are selected
 	 * @returns {boolean}
 	 */
-	public allTypesSelected(): boolean { return false; }
+	public allTypesSelected(): boolean {
+		const availableTypes = this.types.map((val) => val.id);
+		const possibleTypes = (this.form.get("links") as FormArray).getRawValue().length;
+
+		return (availableTypes.length === possibleTypes);
+	}
 
 	/**
 	 * todo    add comments
@@ -88,6 +87,36 @@ export class LinkComponent implements OnInit {
 	 */
 	public removeLink(idx: number) {}
 
+	public saveLink(link: FormControl, idx: number) {
+		if (!link.valid || this.postId === null) {
+			return;
+		}
+
+		const isCreate = (link.get("post_id").value === null);
+
+		const body = link.value;
+		let request = this.service.create(body, this.postId);
+
+		if (!isCreate) {
+			request = this.service.update(this.postId, body, body.post_link_type);
+		}
+
+		request
+			.subscribe(
+				(result: PostLink) => {
+					if (isCreate) {
+						this.links.push(result);
+					} else {
+						this.links[ idx ] = result;
+					}
+
+					this.setForm();
+				},
+				(err: ErrorResponse) => {
+					console.log(err);
+				});
+	}
+
 	/**
 	 *
 	 * @param {FormControl} link
@@ -97,28 +126,13 @@ export class LinkComponent implements OnInit {
 		link.get("post_link_type").setValue(type);
 	}
 
-	public saveLink(link: FormControl) {
-		if (!link.valid) {
-			return;
-		}
+	private setForm() {
+		this.form = this.builder.group({
+			links: this.builder.array([]),
+		});
 
-		const body = link.value;
-		let request = this.service.create(body, this.postId);
+		this.links.forEach((val: PostLink) => { this.addLink(val); });
 
-		console.log(link.get("post_id").value);
-		console.log(this.postId);
-
-		if (link.get("post_id").value !== null) {
-			// request = this.service.update(this.postId, body, body.post_link_type);
-		}
-
-		request
-			.subscribe(
-				(result: PostLink) => {
-					console.log(result);
-				},
-				(err: ErrorResponse) => {
-					console.log(err);
-				});
+		this.formReady.emit(this.form);
 	}
 }
