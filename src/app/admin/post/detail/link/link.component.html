@@ -18,7 +18,7 @@
                         {{ type.name }}
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a rel="nofollow" class="dropdown-item" (click)="removeLink(idx)">Remove</a>
+                    <a rel="nofollow" class="dropdown-item" (click)="removeLink(link, idx)">Remove</a>
                 </div>
             </div>
             <input type="text" formControlName="link" class="form-control" (blur)="saveLink(link, idx)">

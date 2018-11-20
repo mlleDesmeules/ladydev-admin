@@ -35,6 +35,11 @@ export class PostLinkService extends BaseService {
 			);
 	}
 
+	delete(id: number, linkType?: number): Observable<any> {
+		return this.http.delete(this._url(id, linkType))
+			.pipe(catchError((err: any) => throwError(this.mapError(err))));
+	}
+
 	protected _url(id: string | number, type?: string | number): string {
 		return `/${this.baseUrl}/${id}/${this.modelName}` + (type ? `/${type}` : "");
 	}

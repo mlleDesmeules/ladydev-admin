@@ -85,7 +85,30 @@ export class LinkComponent implements OnInit {
 	 * todo    add comments
 	 * todo    implement remove links
 	 */
-	public removeLink(idx: number) {}
+	public removeLink(link: FormControl, idx: number) {
+		const isCreate = (link.get("post_id").value === null);
+
+		if (isCreate) {
+			this.getLinks().removeAt(idx);
+			return;
+		}
+
+		const request = this.service.delete(this.postId, link.get("post_link_type").value);
+
+		request
+			.subscribe(
+				() => {
+					// remove the link
+					this.links.splice(idx, 1);
+
+					// reset the form
+					this.setForm();
+				},
+				(err: ErrorResponse) => {
+					console.log(err);
+				},
+			);
+	}
 
 	public saveLink(link: FormControl, idx: number) {
 		if (!link.valid || this.postId === null) {
