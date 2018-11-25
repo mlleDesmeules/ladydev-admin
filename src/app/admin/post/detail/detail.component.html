@@ -40,7 +40,7 @@
 					</div>
 					<div class="line"></div>
 
-					<div class="form-group row mb-5">
+                    <div class="form-group row">
 						<label class="offset-sm-1 col-sm-2 form-control-label">
 							Tags
 						</label>
@@ -54,6 +54,10 @@
 							</div>
 						</div>
 					</div>
+                    <div class="line"></div>
+
+                    <app-post-detail-link [postId]="post.id" [links]="post.links"
+                                          [types]="linkTypes"></app-post-detail-link>
 
 					<ngb-tabset justify="justified" type="pills" formArrayName="translations">
 						<ngb-tab *ngFor="let t of getTranslations().controls; let idx = index;" [formArrayName]="idx">

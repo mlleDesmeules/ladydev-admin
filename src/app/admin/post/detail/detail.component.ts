@@ -7,7 +7,14 @@ import { Lang } from "@core/data/languages";
 import { Tag } from "@core/data/tags";
 import { ErrorResponse } from "@core/data/error-response.model";
 import { LoggerService } from "@shared/logger/logger.service";
-import { Post, PostStatus, PostService, PostTagService, PostCoverService } from "@core/data/posts";
+import {
+	Post,
+	PostStatus,
+	PostService,
+	PostTagService,
+	PostCoverService,
+	PostLinkType,
+} from "@core/data/posts";
 
 import { AtIndexOfPipe } from "@shared/pipes/array/at-index-of.pipe";
 import { SlugPipe } from "@shared/pipes/string/slug.pipe";
@@ -27,6 +34,7 @@ export class DetailComponent implements OnInit {
 	public languages: Lang[];
 	public statuses: PostStatus[];
 	public categories: Category[];
+	public linkTypes: PostLinkType[];
 	public tags: Tag[];
 
 	public form: FormGroup;
@@ -67,12 +75,13 @@ export class DetailComponent implements OnInit {
 		}
 
 		this.form = this._builder.group({
-			category_id: this._builder.control(this.post.category_id, [Validators.required]),
-			post_status_id: this._builder.control(status, [Validators.required]),
-			is_featured: this._builder.control(this.post.is_featured),
+			category_id       : this._builder.control(this.post.category_id, [ Validators.required ]),
+			post_status_id    : this._builder.control(status, [ Validators.required ]),
+			is_featured       : this._builder.control(this.post.is_featured),
 			is_comment_enabled: this._builder.control(this.post.is_comment_enabled),
-			tags: this._builder.control([]),
-			translations: this._builder.array([]),
+			tags              : this._builder.control([]),
+			links             : this._builder.array([]),
+			translations      : this._builder.array([]),
 		});
 
 		this.languages.forEach((lang: Lang) => {
@@ -118,7 +127,7 @@ export class DetailComponent implements OnInit {
 			const lang = control.get("lang_id").value;
 
 			if (file && post.findTranslation(lang)) {
-				let form = new FormData();
+				const form = new FormData();
 				form.append("picture", file);
 
 				files.push({ lang_id: lang, file: form });
@@ -126,6 +135,10 @@ export class DetailComponent implements OnInit {
 		});
 
 		return files;
+	}
+
+	public formInitialized(name: string, form: FormGroup) {
+		this.form.setControl(name, form.get(name));
 	}
 
 	public getErrors(name: string, langId?: number): any[] {
@@ -208,7 +221,7 @@ export class DetailComponent implements OnInit {
 			const translation = this.getTranslations().at(idx);
 
 			input = translation.get(name) as FormControl;
-			errors = this.getErrors(name, translation.get('lang_id').value);
+			errors = this.getErrors(name, translation.get("lang_id").value);
 		}
 
 		return ((input.invalid && input.touched) || errors.length > 0);
@@ -261,8 +274,8 @@ export class DetailComponent implements OnInit {
 		this.errors = [];
 		this.formLoading = true;
 
+		const body = this.post.form(this.form.getRawValue());
 		let req = null;
-		let body = this.post.form(this.form.getRawValue());
 
 		if (this.isCreate()) {
 			req = this.service.create(body);
@@ -274,11 +287,12 @@ export class DetailComponent implements OnInit {
 			(result: Post) => {
 				const hasRelation = this._updateAllRelations(result);
 
+				this.post = this.service.mapModel(result);
+
 				// reset form after create
 				if (this.isCreate()) {
+					this.post = new Post();
 					this.resetForm();
-				} else {
-					this.post = this.service.mapModel(result);
 				}
 
 				// if there isn't any relation to update show the success message
@@ -304,6 +318,7 @@ export class DetailComponent implements OnInit {
 		const routeLanguages = this._route.snapshot.data["languages"];
 		const routeStatuses = this._route.snapshot.data["statuses"];
 		const routeCategories = this._route.snapshot.data["categories"];
+		const routeLinkTypes = this._route.snapshot.data[ "linkTypes" ];
 		const routeTags = this._route.snapshot.data["tags"];
 		const routePost = this._route.snapshot.data["post"];
 
@@ -312,6 +327,7 @@ export class DetailComponent implements OnInit {
 		this.languages = routeLanguages || [];
 		this.statuses = routeStatuses || [];
 		this.categories = routeCategories || [];
+		this.linkTypes = routeLinkTypes || [];
 		this.tags = routeTags || [];
 	}
 
@@ -363,14 +379,14 @@ export class DetailComponent implements OnInit {
 	private _updateAllRelations(post: Post): boolean {
 		const allRequests = [];
 
-		//	if there are any files to upload, create upload requests
+		// if there are any files to upload, create upload requests
 		if (this.hasFilesToUpload(post)) {
 			const files = this._filesToUpload(post);
 
 			allRequests.push(this.coverService.uploadSeveral(post.id, files));
 		}
 
-		//	if there are any tags to link/unlink, create requests
+		// if there are any tags to link/unlink, create requests
 		if (this._tagsChanged()) {
 			const tags = this._getTagsToUpdate();
 
@@ -383,12 +399,12 @@ export class DetailComponent implements OnInit {
 			}
 		}
 
-		//  if there isn't any requests, then return that there is nothing to do
+		// if there isn't any requests, then return that there is nothing to do
 		if (allRequests.length === 0) {
 			return false;
 		}
 
-		//	create an observable on all requests
+		// create an observable on all requests
 		forkJoin(allRequests)
 			.subscribe(
 				(results: Post[]) => {
@@ -401,14 +417,14 @@ export class DetailComponent implements OnInit {
 				},
 			);
 
-		//	return that are is something to do
+		// return that are is something to do
 		return true;
 	}
 
 	public updateFlag(flag: string, value: number) {
 		this.form.get(flag).setValue(value);
 
-		let body = this.post.form(this.form.getRawValue());
+		const body = this.post.form(this.form.getRawValue());
 
 		this._updatePost(body);
 	}
@@ -416,7 +432,7 @@ export class DetailComponent implements OnInit {
 	public updateFeatured(featuredFlag: number) {
 		this.form.get("is_featured").setValue(featuredFlag);
 
-		let body = this.post.form(this.form.getRawValue());
+		const body = this.post.form(this.form.getRawValue());
 
 		this._updatePost(body, "featureLoading");
 	}
@@ -428,7 +444,7 @@ export class DetailComponent implements OnInit {
 		//  update the form post status id
 		this.form.get("post_status_id").setValue(statusId);
 
-		let body = this.post.form(this.form.getRawValue());
+		const body = this.post.form(this.form.getRawValue());
 
 		this._updatePost(body, "statusLoading");
 	}

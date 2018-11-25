@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ErrorResponse } from "@core/data/error-response.model";
 import { PostLink, PostLinkService, PostLinkType } from "@core/data/posts";
@@ -8,7 +8,7 @@ import { PostLink, PostLinkService, PostLinkType } from "@core/data/posts";
 	templateUrl: "./link.component.html",
 	styleUrls  : [ "./link.component.scss" ],
 })
-export class LinkComponent implements OnInit {
+export class LinkComponent implements OnInit, OnChanges {
 
 	@Input()
 	public types: PostLinkType[] = [];
@@ -19,9 +19,6 @@ export class LinkComponent implements OnInit {
 	@Input()
 	public postId: number = null;
 
-	@Output()
-	formReady: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
-
 	form: FormGroup;
 
 	constructor(private builder: FormBuilder,
@@ -30,6 +27,16 @@ export class LinkComponent implements OnInit {
 
 	ngOnInit() {
 		this.setForm();
+	}
+
+	ngOnChanges(changes: SimpleChanges) {
+		console.log(changes.postId);
+		if (!changes.postId.firstChange) {
+			console.log(changes.postId);
+			this.getLinks().controls.forEach((link: FormControl, idx: number) => {
+				this.saveLink(link, idx);
+			});
+		}
 	}
 
 	/**
@@ -146,6 +153,10 @@ export class LinkComponent implements OnInit {
 	}
 
 	/**
+	 * Select Type
+	 *
+	 * This method will save the type passed in parameter, to the active
+	 * link form control.
 	 *
 	 * @param {FormControl} link
 	 * @param {number} type
@@ -154,13 +165,18 @@ export class LinkComponent implements OnInit {
 		link.get("post_link_type").setValue(type);
 	}
 
+	/**
+	 * Set Form
+	 *
+	 * This method will define the form property with the form builder,
+	 * then for each links existing, a call will be made to create the
+	 * link object and add it to the form.
+	 */
 	private setForm() {
 		this.form = this.builder.group({
 			links: this.builder.array([]),
 		});
 
 		this.links.forEach((val: PostLink) => { this.addLink(val); });
-
-		this.formReady.emit(this.form);
 	}
 }
